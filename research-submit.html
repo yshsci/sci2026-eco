@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>환경 변화 사례 조사 제출</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="topbar"><div class="topbar-inner"><div class="brand"><small>통합과학 2 · 환경 변화와 과학 커뮤니케이션</small><h1>Climate × Ecosystem Lab</h1></div><nav class="nav"><a href="index.html">🌿 환경 변화 탐구</a><a class="active" href="research-submit.html">📝 사례 조사 제출</a><a href="art-submit.html">🎨 AI 명화 제출</a><a href="gallery.html">🖼 전시관</a></nav></div></header>
+<main class="page">
+<section class="hero"><div><div class="kicker">REAL-WORLD CASE REPORT</div><h2>환경 변화가 생태계에 미친 실제 사례를 정리하세요.</h2><p>앞에서 선택한 사례 주제를 출발점으로 실제 장소·시기·생물·생태계 변화를 조사하고, 서로 다른 출처를 근거로 제출합니다.</p></div><div class="hero-note">사례 카드의 문장은 조사 주제일 뿐 정답이 아닙니다. 실제 조사한 사례의 구체적인 장소와 시기, 근거가 드러나도록 작성하세요.</div></section>
+<div class="layout">
+<section class="panel">
+<div class="panel-head"><div><div class="kicker">CONNECTED TOPIC</div><h3>탐구 출발점</h3></div><a class="btn" href="index.html">← 탐구 화면</a></div>
+<div class="case-bridge"><strong id="topicTitle">선택한 사례가 없습니다.</strong><p id="topicSub">환경 변화 탐구 화면에서 사례를 선택하면 이곳에 표시됩니다.</p><div class="badges" id="topicBadges" style="margin-top:8px"></div></div>
+<div class="prompt-box" style="margin-top:10px"><b>조작한 환경 조건</b><div id="variables" style="font-size:11px;line-height:1.65;color:var(--muted);margin-top:6px">—</div></div>
+<div class="prompt-box" style="margin-top:10px"><b>탐구 화면에서 작성한 메모</b><div id="savedMemo" style="font-size:11px;line-height:1.65;color:var(--muted);white-space:pre-wrap;margin-top:6px">—</div></div>
+</section>
+<section class="panel">
+<div class="panel-head"><div><div class="kicker">SUBMIT REPORT</div><h3>사례 조사 제출</h3></div></div>
+<div class="form-grid"><div class="field"><label>반 / 학번</label><input id="studentId" type="text" placeholder="예: 2-3 15"></div><div class="field"><label>이름</label><input id="studentName" type="text" placeholder="이름"></div></div>
+<div class="field"><label>조사한 실제 사례명</label><input id="caseName" type="text" placeholder="예: 2024년 대규모 산호 백화"></div>
+<div class="field"><label>장소와 시기</label><input id="placeTime" type="text" placeholder="어디에서, 언제 발생했는가?"></div>
+<div class="field"><label>확인한 환경 변화</label><textarea id="envChange" placeholder="기온·강수량·해수 온도·pH·서식지 등 무엇이 어떻게 변했는지 근거와 함께 작성하세요."></textarea></div>
+<div class="field"><label>영향을 받은 생물 또는 생태계</label><textarea id="affected" placeholder="영향을 받은 생물종, 개체군, 군집 또는 생태계를 작성하세요."></textarea></div>
+<div class="field"><label>생태계에 나타난 영향</label><textarea id="impact" placeholder="개체수·분포·번식·먹이관계·서식지 등에 나타난 변화를 작성하세요."></textarea></div>
+<div class="form-grid"><div class="field"><label>출처 1</label><input id="source1" type="text" placeholder="기관/문서명 또는 URL"></div><div class="field"><label>출처 2</label><input id="source2" type="text" placeholder="기관/문서명 또는 URL"></div></div>
+<div class="field"><label>종합 정리</label><textarea id="conclusion" placeholder="이 사례가 환경 변화와 생태계의 관계에 대해 보여주는 점을 자신의 언어로 정리하세요."></textarea></div>
+<div class="btn-row"><button id="submitBtn" class="btn primary" type="button">사례 조사 제출</button></div>
+<div id="status" class="status">필수 항목을 작성한 뒤 제출하세요.</div>
+</section>
+</div>
+<iframe id="submitFrame" name="submitFrame" style="display:none"></iframe>
+<form id="hiddenForm" method="POST" target="submitFrame" style="display:none">
+<input name="action" value="submit_research"><input name="studentId"><input name="studentName"><input name="topic"><input name="variableSummary"><input name="caseName"><input name="placeTime"><input name="envChange"><input name="affected"><input name="impact"><input name="source1"><input name="source2"><input name="conclusion">
+</form>
+</main>
+<script src="config.js"></script><script>
+const $=id=>document.getElementById(id);let selected=null;try{selected=JSON.parse(localStorage.getItem('selected_eco_case')||'null')}catch(e){}
+function variableSummary(v){if(!v)return '탐구 화면에서 선택한 조건이 없습니다.';return `평균 기온 +${Number(v.temp||0).toFixed(1)} ℃ · 강수량 ${Number(v.rain||0)>0?'+':''}${v.rain||0}% · 해수 온도 +${Number(v.seaTemp||0).toFixed(1)} ℃ · 해양 pH ${Number(v.ph||8.1).toFixed(2)} · 서식지 면적 ${v.habitat||100}%`}
+if(selected){$('topicTitle').textContent=selected.title||'선택 사례';$('topicSub').textContent=selected.sub||'';$('topicBadges').innerHTML=(selected.badges||[]).map(x=>`<span class="badge">${x}</span>`).join('');$('variables').textContent=variableSummary(selected.variables);$('savedMemo').textContent=selected.memo||'작성한 메모가 없습니다.'}
+$('submitBtn').onclick=()=>{const required=['studentId','studentName','caseName','placeTime','envChange','affected','impact','source1','source2','conclusion'];if(required.some(id=>!$(id).value.trim())){$('status').textContent='반/학번, 이름, 사례 내용, 출처 2개, 종합 정리를 모두 작성하세요.';return}if(WEB_APP_URL.startsWith('PASTE_')){$('status').textContent='제출 기능이 아직 연결되지 않았습니다. 교사에게 알려 주세요.';return}const f=$('hiddenForm');f.action=WEB_APP_URL;f.studentId.value=$('studentId').value.trim();f.studentName.value=$('studentName').value.trim();f.topic.value=selected?.title||'';f.variableSummary.value=variableSummary(selected?.variables);f.caseName.value=$('caseName').value.trim();f.placeTime.value=$('placeTime').value.trim();f.envChange.value=$('envChange').value.trim();f.affected.value=$('affected').value.trim();f.impact.value=$('impact').value.trim();f.source1.value=$('source1').value.trim();f.source2.value=$('source2').value.trim();f.conclusion.value=$('conclusion').value.trim();$('status').textContent='제출 중입니다…';f.submit();setTimeout(()=>{$('status').textContent='사례 조사를 제출했습니다.'},1000)};
+</script></body></html>
