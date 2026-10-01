@@ -134,7 +134,7 @@ function loadGallery() {
   s.src =
     cleanUrl +
     (cleanUrl.includes('?') ? '&' : '?') +
-    'action=list_art&callback=renderGallery&t=' +
+    'action=list_art&callback=renderGallery' +
     Date.now();
 
   console.log('Gallery 요청 URL:', s.src);
