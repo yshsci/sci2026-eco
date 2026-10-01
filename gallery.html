@@ -6,6 +6,33 @@
 <script src="config.js?v=2"></script><script>
 const $=id=>document.getElementById(id);function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function renderGallery(items){if(!Array.isArray(items))items=[];$('countText').textContent=`총 ${items.length}점이 전시되어 있습니다.`;if(!items.length){$('gallery').innerHTML='<div class="empty">아직 전시된 작품이 없습니다.</div>';return}$('gallery').innerHTML=items.map((x,i)=>`<article class="art-card" data-i="${i}"><div class="art-img"><img src="${x.imageUrl}" alt="${esc(x.title)}"></div><div class="art-info"><h3 class="art-title">${esc(x.title)}</h3><div class="art-desc">${esc(x.description)}</div></div></article>`).join('');document.querySelectorAll('.art-card').forEach(card=>card.onclick=()=>{const x=items[+card.dataset.i];$('modalImg').src=x.imageUrl;$('modalTitle').textContent=x.title;$('modalDesc').textContent=x.description;$('modal').classList.add('show')})}window.renderGallery=renderGallery;
-function loadGallery(){$('gallery').innerHTML='<div class="empty">전시 작품을 불러오는 중입니다…</div>';if(WEB_APP_URL.startsWith('PASTE_')){$('gallery').innerHTML='<div class="empty">전시관이 아직 서버와 연결되지 않았습니다.</div>';$('countText').textContent='';return}const old=document.getElementById('jsonpScript');if(old)old.remove();const s=document.createElement('script');s.id='jsonpScript';s.src=WEB_APP_URL+(WEB_APP_URL.includes('?')?'&':'?')+'action=list_art&callback=renderGallery'+Date.now();s.onerror=()=>{$('gallery').innerHTML='<div class="empty">작품 목록을 불러오지 못했습니다.</div>'};document.body.appendChild(s)}
+function loadGallery(){function loadGallery() {
+  $('gallery').innerHTML =
+    '<div class="empty">작품을 불러오는 중입니다…</div>';
+
+  const cleanUrl = WEB_APP_URL
+    .replace(/\/macros\/u\/\d+\/s\//, '/macros/s/');
+
+  const old = document.getElementById('jsonpScript');
+  if (old) old.remove();
+
+  const s = document.createElement('script');
+  s.id = 'jsonpScript';
+
+  s.src =
+    cleanUrl +
+    (cleanUrl.includes('?') ? '&' : '?') +
+    'action=list_art&callback=renderGallery&t=' +
+    Date.now();
+
+  console.log('Gallery 요청 URL:', s.src);
+
+  s.onerror = () => {
+    $('gallery').innerHTML =
+      '<div class="empty">작품 목록을 불러오지 못했습니다.</div>';
+  };
+
+  document.body.appendChild(s);
+}}
 $('refreshBtn').onclick=loadGallery;$('modalClose').onclick=()=> $('modal').classList.remove('show');$('modal').onclick=e=>{if(e.target===$('modal'))$('modal').classList.remove('show')};document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('show')});loadGallery();
 </script></body></html>
